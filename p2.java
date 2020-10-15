@@ -9,7 +9,30 @@ import java.io.Console;
 
 public class p2 {
 
-	public void log(String who, String tableName, String operation) {
+	public static Connection conn;
+	public static String username;
+
+	public static ResultSet runQuery(String q) {
+		try {
+			//System.out.println("HERE!!!!");
+			Statement qStmt = conn.createStatement();
+			ResultSet retVal = qStmt.executeQuery("SELECT * from students");
+			while(retVal.next()) {
+				System.out.println("HERE!!!!");
+				System.out.println(retVal.getString(1));
+			}
+			return retVal;
+		}
+		catch (SQLException ex) { 
+			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+		}
+		catch (Exception e) {
+			System.out.println ("\n*** other Exception caught ***\n"+e);
+		}
+		return null;
+	}
+
+	public static void log(String tableName, String operation) {
 		//switch statement for getting key_value
 		String key;
 
@@ -38,14 +61,74 @@ public class p2 {
 			default:
 				key = "ERROR";
 
+
 		}		
 		
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());	
-
+	
+		String logQuery = "INSERT INTO logs VALUES (sequence_1.nextval, " + username + ", " + timestamp + ", " + tableName + ", " + operation + ", " + key + ")";
+			
+		runQuery(logQuery);
 	}
 	
-	public static void displayTable() {
-		System.out.println("Display Table");
+	public static void displayTable() throws IOException {
+		BufferedReader readKeyBoard;
+		String tableSelection;
+		String table;
+		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));			
+		System.out.print("Table Options:\n 1- Students\n 2-Courses\n 3-Prereqs\n 4-Classes\n 5-Enrollments\n 6-Logs\n");
+		System.out.print("Choose Table: ");
+		tableSelection  = readKeyBoard.readLine();
+		switch(tableSelection) {
+
+			case "1":
+				table = "students";
+				break;
+			
+			case "2":
+				table = "courses";
+				break;
+	
+			case "3":
+				table = "prerequisites";
+				break;
+			
+			case "4":
+				table = "classes";
+				break;
+
+			case "5":
+				table = "enrollments";
+				break;
+
+			case "6":
+				table = "logs";
+				break;
+
+			default:
+				table = "NULL";
+		}
+		System.out.println("TABLE: " + table);
+		String displayQuery = "SELECT * FROM " + table;
+		System.out.println("DISPLAY QUERY: " + displayQuery);
+		ResultSet rset = runQuery(displayQuery);
+		try {
+			while(rset.next()) {
+			System.out.println(rset.getString(1) + " ");
+			System.out.println(rset.getString(2) + " ");
+			System.out.println(rset.getString(3) + " ");
+			System.out.println(rset.getString(4) + " ");
+			System.out.println(rset.getString(5) + " ");
+			System.out.println(rset.getString(6) + " ");
+			}
+		}
+		catch (SQLException ex) { 
+			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+		}
+		catch (Exception e) {
+			System.out.println ("\n*** other Exception caught ***\n"+e);
+		}
+		//log(table, "Display");
 	}
 	public static void clearScreen() {  
     	System.out.print("\033[H\033[2J");  
@@ -67,7 +150,6 @@ public class p2 {
 
 				System.out.println("Please log in to your PODS account...");
 				BufferedReader readKeyBoard;
-				String username;
 				String password;
 				readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
 				System.out.print("Username: ");
@@ -76,7 +158,8 @@ public class p2 {
 				//password = readKeyBoard.readLine();
 				char [] passwordChars = console.readPassword();
 				password = new String(passwordChars);
-				Connection conn = ds.getConnection(username, password);
+				conn = ds.getConnection(username, password);
+				Statement stmt = conn.createStatement();
 				//break;
 			}
 			
