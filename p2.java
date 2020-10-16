@@ -16,9 +16,10 @@ public class p2 {
 		try {
 			//System.out.println("HERE!!!!");
 			Statement qStmt = conn.createStatement();
+			//qStmt.executeQuery("INSERT INTO students VALUES ('B004', 'jack', 'roth', 'freshman', 4.0, 'jrothbe6@bing.edu')");
 			ResultSet retVal = qStmt.executeQuery("SELECT * from students");
 			while(retVal.next()) {
-				System.out.println("HERE!!!!");
+				//System.out.println("HERE!!!!");
 				System.out.println(retVal.getString(1));
 			}
 			return retVal;
@@ -159,7 +160,9 @@ public class p2 {
 				char [] passwordChars = console.readPassword();
 				password = new String(passwordChars);
 				conn = ds.getConnection(username, password);
-				Statement stmt = conn.createStatement();
+				//Statement stmt = conn.createStatement();
+				//stmt.executeQuery("INSERT INTO students VALUES ('B002', 'jack', 'roth', 'freshman', 4.0, 'jrothbe4@bing.edu')");
+				//stmt.executeQuery("INSERT INTO students VALUES ('B003', 'john', 'smith', 'freshman', 3.0, 'jsmith@bing.edu')");
 				//break;
 			}
 			
