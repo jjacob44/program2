@@ -14,14 +14,11 @@ public class p2 {
 
 	public static ResultSet runQuery(String q) {
 		try {
-			//System.out.println("HERE!!!!");
 			Statement qStmt = conn.createStatement();
-			//qStmt.executeQuery("INSERT INTO students VALUES ('B004', 'jack', 'roth', 'freshman', 4.0, 'jrothbe6@bing.edu')");
-			ResultSet retVal = qStmt.executeQuery("SELECT * from students");
-			while(retVal.next()) {
-				//System.out.println("HERE!!!!");
+			ResultSet retVal = qStmt.executeQuery(q);
+			/*while(retVal.next()) {
 				System.out.println(retVal.getString(1));
-			}
+			}*/
 			return retVal;
 		}
 		catch (SQLException ex) { 
@@ -76,6 +73,7 @@ public class p2 {
 		BufferedReader readKeyBoard;
 		String tableSelection;
 		String table;
+		int numColumns;
 		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));			
 		System.out.print("Table Options:\n 1- Students\n 2-Courses\n 3-Prereqs\n 4-Classes\n 5-Enrollments\n 6-Logs\n");
 		System.out.print("Choose Table: ");
@@ -84,43 +82,48 @@ public class p2 {
 
 			case "1":
 				table = "students";
+				numColumns = 6;
 				break;
 			
 			case "2":
 				table = "courses";
+				numColumns = 3;
 				break;
 	
 			case "3":
 				table = "prerequisites";
+				numColumns = 4;
 				break;
 			
 			case "4":
 				table = "classes";
+				numColumns = 8;
 				break;
 
 			case "5":
 				table = "enrollments";
+				numColumns = 3;
 				break;
 
 			case "6":
 				table = "logs";
+				numColumns = 6;
 				break;
 
 			default:
 				table = "NULL";
+				numColumns = 0;
 		}
-		System.out.println("TABLE: " + table);
+		//System.out.println("TABLE: " + table);
 		String displayQuery = "SELECT * FROM " + table;
-		System.out.println("DISPLAY QUERY: " + displayQuery);
+		//System.out.println("DISPLAY QUERY: " + displayQuery);
 		ResultSet rset = runQuery(displayQuery);
 		try {
 			while(rset.next()) {
-			System.out.println(rset.getString(1) + " ");
-			System.out.println(rset.getString(2) + " ");
-			System.out.println(rset.getString(3) + " ");
-			System.out.println(rset.getString(4) + " ");
-			System.out.println(rset.getString(5) + " ");
-			System.out.println(rset.getString(6) + " ");
+				for(int i = 1; i <= numColumns; i++) {
+					System.out.print(rset.getString(i) + " ");
+				}
+				System.out.println();
 			}
 		}
 		catch (SQLException ex) { 
