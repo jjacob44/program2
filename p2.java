@@ -191,8 +191,44 @@ public class p2 {
 		insertStudent(id,first,last,standing,grade,mail);
 
 	}
-	public static void showClasses(String id){
-		String classQuery = "SELECT students.sid, firstname, lastname, status, classes.classid, classes.dept_code, classes.course_no, title  FROM students JOIN enrollments ON enrollments.sid = students.sid JOIN classes ON classes.classid = enrollments.classid JOIN courses ON courses.dept_code = classes.dept_code AND courses.course_no = classes.course_no WHERE students.sid = 'B001'";
+	public static void showClasses(String sid){
+		//String classQuery = "SELECT students.sid, firstname, lastname, status, classes.classid, classes.dept_code, classes.course_no, title  FROM students JOIN enrollments ON enrollments.sid = students.sid JOIN classes ON classes.classid = enrollments.classid JOIN courses ON courses.dept_code = classes.dept_code AND courses.course_no = classes.course_no WHERE students.sid = ?";
+		//ResultSet rset = runQuery(classQuery);
+		int c = 1;
+		try {
+			PreparedStatement stmt = conn.prepareStatement("SELECT students.sid, firstname, lastname, status, classes.classid, classes.dept_code, classes.course_no, title  FROM students JOIN enrollments ON enrollments.sid = students.sid JOIN classes ON classes.classid = enrollments.classid JOIN courses ON courses.dept_code = classes.dept_code AND courses.course_no = classes.course_no WHERE students.sid = ?");
+			stmt.setString(1, sid);
+			ResultSet rset = stmt.executeQuery();
+			while(rset.next()) {
+				if(c == 1) {
+					System.out.print(rset.getString(1) + " ");
+					System.out.print(rset.getString(2) + " ");
+					System.out.print(rset.getString(3) + " ");
+					System.out.println(rset.getString(4) + " ");
+					System.out.println("-----------------------");
+				}
+				System.out.print(rset.getString(5) + " ");
+				System.out.print(rset.getString(6) + rset.getString(7) + " ");	
+				System.out.println(rset.getString(8) + "\n"); 
+				c = 2;
+			}
+		}
+		catch (SQLException ex) { 
+			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+		}
+		catch (Exception e) {
+			System.out.println ("\n*** other Exception caught ***\n"+e);
+		}
+	}
+	
+	public static void displayClasses() throws IOException {
+		System.out.print("Please enter sid: ");
+		BufferedReader readKeyBoard;
+		String sid;
+		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+		sid = readKeyBoard.readLine();
+		clearScreen();
+		showClasses(sid);
 	}
 	public static void main ( String args[] ) throws IOException {
 
@@ -275,6 +311,11 @@ public class p2 {
 
 					addStudent();
 					break;
+
+				case 3:
+					displayClasses();
+					break;
+
 				default:
 					System.out.println("Invalid input, try again");
 					continue;
