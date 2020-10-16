@@ -139,9 +139,24 @@ public class p2 {
     	System.out.flush();  
 		//code snippet taken from: 	https://stackoverflow.com/questions/2979383/java-clear-the-console
 	}  
-	public static void insertStudent(String sid, String firstName, String lastName, String status, String gpa, String emailAddress) {
-		String addQuery = "INSERT INTO students VALUES (" + sid + ", " + firstName + ", " + lastName + ", " + status + ", " + gpa + ", "+ emailAddress + ")"; 
-		runQuery(addQuery);
+	public static void insertStudent(String sid, String firstName, String lastName, String status, String gpa, String emailAddress)  {
+		double gradePoint = Double.parseDouble(gpa);
+		try{
+			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO students(sid,firstName,lastName,status,gpa,email) VALUES (?, ?, ?, ?, ?, ?)");
+			pstmt.setString(1,sid);
+			pstmt.setString(2,firstName);
+			pstmt.setString(3,lastName);
+			pstmt.setString(4,status);
+			pstmt.setDouble(5,gradePoint);
+			pstmt.setString(6,emailAddress);
+
+			pstmt.executeUpdate();
+		}
+		catch(SQLException e){
+			System.out.println(e);
+		}
+		//String addQuery = "INSERT INTO students VALUES (" + sid + ", " + firstName + ", " + lastName + ", " + status + ", " + gpa + ", "+ emailAddress + ")"; 
+		//runQuery(addQuery);
 		//log here
 	}
 	public static void addStudent() throws IOException{
@@ -256,7 +271,7 @@ public class p2 {
 				case 2:
 
 					addStudent();
-			
+					break;
 				default:
 					System.out.println("Invalid input, try again");
 					continue;
