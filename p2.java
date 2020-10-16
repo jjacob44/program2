@@ -139,7 +139,43 @@ public class p2 {
     	System.out.flush();  
 		//code snippet taken from: 	https://stackoverflow.com/questions/2979383/java-clear-the-console
 	}  
+	public static void insertStudent(String sid, String firstName, String lastName, String status, String gpa, String emailAddress) {
+		String addQuery = "INSERT INTO students VALUES (" + sid + ", " + firstName + ", " + lastName + ", " + status + ", " + gpa + ", "+ emailAddress + ")"; 
+		runQuery(addQuery);
+		//log here
+	}
+	public static void addStudent() throws IOException{
+		clearScreen();
+		BufferedReader readKeyBoard;
+		String id;
+		String first;
+		String last;
+		String standing;
+		String grade;
+		String mail;
+		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
 
+		System.out.print("Please insert student id: ");
+		id  = readKeyBoard.readLine();
+
+		System.out.print("Please insert first name: ");
+		first = readKeyBoard.readLine();
+
+		System.out.print("Please insert last name: ");
+		last = readKeyBoard.readLine();
+
+		System.out.print("Please insert status: ");
+		standing = readKeyBoard.readLine();
+
+		System.out.print("Please insert gpa: ");
+		grade = readKeyBoard.readLine();
+
+		System.out.print("Please insert email address (before the @): ");
+		mail = readKeyBoard.readLine();
+
+		insertStudent(id,first,last,standing,grade,mail);
+
+	}
 	public static void main ( String args[] ) throws IOException {
 
 		Console console = System.console();
@@ -217,6 +253,9 @@ public class p2 {
 				case 1:
 					displayTable();
 					break;
+				case 2:
+
+					addStudent();
 			
 				default:
 					System.out.println("Invalid input, try again");
