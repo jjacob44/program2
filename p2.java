@@ -185,11 +185,14 @@ public class p2 {
 		System.out.print("Please insert gpa: ");
 		grade = readKeyBoard.readLine();
 
-		System.out.print("Please insert email address (before the @): ");
+		System.out.print("Please insert email address: ");
 		mail = readKeyBoard.readLine();
 
 		insertStudent(id,first,last,standing,grade,mail);
 
+	}
+	public static void showClasses(String id){
+		String classQuery = "SELECT students.sid, firstname, lastname, status, classes.classid, classes.dept_code, classes.course_no, title  FROM students JOIN enrollments ON enrollments.sid = students.sid JOIN classes ON classes.classid = enrollments.classid JOIN courses ON courses.dept_code = classes.dept_code AND courses.course_no = classes.course_no WHERE students.sid = 'B001'";
 	}
 	public static void main ( String args[] ) throws IOException {
 
