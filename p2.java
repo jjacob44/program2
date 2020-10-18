@@ -196,6 +196,22 @@ public class p2 {
 		//ResultSet rset = runQuery(classQuery);
 		int c = 1;
 		try {
+			PreparedStatement stmt1 = conn.prepareStatement("SELECT sid FROM students WHERE sid  = ?");
+			stmt1.setString(1,sid);
+			ResultSet rset1 = stmt1.executeQuery();
+			if(rset1.next() == false) {
+				System.out.println("The sid is invalid.");
+				proceed();
+				return;
+			}
+			stmt1 = conn.prepareStatement("SELECT sid FROM enrollments WHERE sid  = ?");
+			stmt1.setString(1,sid);
+			rset1 = stmt1.executeQuery();
+			if(rset1.next() == false) {
+				System.out.println("The student has not taken any courses.");
+				proceed();
+				return;
+			}
 			PreparedStatement stmt = conn.prepareStatement("SELECT students.sid, firstname, lastname, status, classes.classid, classes.dept_code, classes.course_no, title  FROM students JOIN enrollments ON enrollments.sid = students.sid JOIN classes ON classes.classid = enrollments.classid JOIN courses ON courses.dept_code = classes.dept_code AND courses.course_no = classes.course_no WHERE students.sid = ?");
 			stmt.setString(1, sid);
 			ResultSet rset = stmt.executeQuery();
@@ -212,6 +228,7 @@ public class p2 {
 				System.out.println(rset.getString(8) + "\n"); 
 				c = 2;
 			}
+			proceed();
 		}
 		catch (SQLException ex) { 
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
@@ -229,6 +246,52 @@ public class p2 {
 		sid = readKeyBoard.readLine();
 		clearScreen();
 		showClasses(sid);
+	}
+
+	public static void proceed() throws IOException{
+		BufferedReader readKeyBoard;
+		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("------------End of Results-----------");
+		System.out.print("Press Enter to continue...");
+		readKeyBoard.readLine();
+		return;
+	}
+	
+	public static void showPrereqs() throws IOException {
+		BufferedReader readKeyBoard;
+		String deptCode;
+		String courseNo;
+		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Please Enter Dept Code: ");
+		deptCode = readKeyBoard.readLine();
+		System.out.print("Please Enter Course #: ");
+		courseNo = readKeyBoard.readLine();
+		clearScreen();
+		System.out.println("---" + deptCode + courseNo + " Prereqs:---\n");
+		System.out.println(prereqs(deptCode, courseNo));
+		proceed();
+	}
+
+	public static String prereqs(String deptCode, String courseNo) throws IOException {
+		try {
+			PreparedStatement stmt = conn.prepareStatement("SELECT prerequisites.pre_dept_code, prerequisites.pre_course_no FROM prerequisites JOIN courses ON prerequisites.dept_code = courses.dept_code AND prerequisites.course_no = courses.course_no WHERE courses.dept_code = ? AND courses.course_no = ?");
+			stmt.setString(1, deptCode);
+			stmt.setString(2, courseNo);
+			ResultSet rset = stmt.executeQuery();
+			while(rset.next()) {
+				String pre_dept_code = rset.getString(1);
+				String pre_course_no = rset.getString(2);
+				return (pre_dept_code + pre_course_no + "\n" + prereqs(pre_dept_code, pre_course_no));
+			}
+			return "";
+		}
+		catch (SQLException ex) { 
+			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+		}
+		catch (Exception e) {
+			System.out.println ("\n*** other Exception caught ***\n"+e);
+		}
+		return courseNo;
 	}
 	public static void main ( String args[] ) throws IOException {
 
@@ -289,19 +352,18 @@ public class p2 {
 	 *	7. Drop Student from Class
 	 *	8. Expel Student from University*/
 		
-		System.out.print("Menu Options:\n 1- Display a Table\n 2- Add Students\n 3- Display Student Enrollment Info\n 4- Display Prereq\n 5- Display Class Enrollment Info\n 6- Enroll Student in Class\n 7- Drop Student from Class\n 8- Expel Student from University\n");
-		
 		while(true) {	
 			BufferedReader readKeyBoard;
 			String temp;
 			readKeyBoard = new BufferedReader(new InputStreamReader(System.in));			
+			System.out.print("Menu Options:\n 1- Display a Table\n 2- Add Students\n 3- Display Student Enrollment Info\n 4- Display Prereq\n 5- Display Class Enrollment Info\n 6- Enroll Student in Class\n 7- Drop Student from Class\n 8- Expel Student from University\n");
 			System.out.print("Choose Option: ");
 			temp  = readKeyBoard.readLine();
 			if (temp.equals("exit")) {
 				System.exit(0);
 			}
 			int optionNumber = Integer.parseInt(temp);
-
+			clearScreen();
 			switch(optionNumber) {
 
 				case 1:
@@ -314,6 +376,10 @@ public class p2 {
 
 				case 3:
 					displayClasses();
+					break;
+
+				case 4:
+					showPrereqs();
 					break;
 
 				default:
