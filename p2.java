@@ -350,6 +350,78 @@ public class p2 {
 		return;
 	}
 
+	public static void enroll() throws IOException {
+		BufferedReader readKeyBoard;
+		String classid;
+		String sid;
+		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Please Enter sid: ");
+		sid = readKeyBoard.readLine();
+		System.out.print("Please Enter Class ID: ");
+		classid = readKeyBoard.readLine();
+		clearScreen();
+		enrollStudent(sid, classid);
+		//proceed();
+		return;
+	}
+
+	public static void enrollStudent(String sid, String classid) {
+		//check if student exists
+		try {
+			PreparedStatement stmt = conn.prepareStatement("SELECT sid FROM students where sid = ?");
+			stmt.setString(1, sid);
+			ResultSet rset = stmt.executeQuery();
+			if(!rset.next()) {
+				System.out.println("sid not found");
+				return;
+			}
+			stmt = conn.prepareStatement("SELECT classid FROM classes where classid = ?");
+			stmt.setString(1, classid);
+			rset = stmt.executeQuery();
+			if(!rset.next()) {
+				System.out.println("The classid is invalid");
+				return;
+			}
+			stmt = conn.prepareStatement("SELECT prerequisites.pre_dept_code, prerequisites.pre_course_no from prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no JOIN enrollments ON enrollments.classid = classes.classid JOIN students ON students.sid = enrollments.sid WHERE classes.classid = ? AND students.sid = ? AND lgrade < 'D'");
+			stmt.setString(1, classid);
+			stmt.setString(2, sid);
+			rset = stmt.executeQuery();
+			if(!rset.next()) {
+				System.out.println("Prerequisite courses have not been completed");
+				return;
+			}
+			stmt = conn.prepareStatement("SELECT sid, semester, year from enrollments JOIN classes ON classes.classid = enrollments.classid WHERE sid = ? GROUP BY sid, semester, year HAVING COUNT(*) >= 3");
+			stmt.setString(1, sid);
+			rset = stmt.executeQuery();
+			if(rset.next()) {
+				System.out.println("You are overloaded");
+				return;
+			}
+			stmt = conn.prepareStatement("SELECT classid FROM classes where classid = ? AND limit = class_size");
+			stmt.setString(1, classid);
+			rset = stmt.executeQuery();
+			if(rset.next()) {
+				System.out.println("The class is full");
+				return;
+			}
+			stmt = conn.prepareStatement("SELECT classes.classid FROM classes JOIN enrollments ON enrollments.classid = classes.classid JOIN students ON students.sid = enrollments.sid WHERE classes.classid = ? AND students.sid = ?");
+			stmt.setString(1, classid);
+			stmt.setString(2, sid);
+			rset = stmt.executeQuery();
+			if(rset.next()) {
+				System.out.println("The student is already in the class");
+				return;
+			}
+			
+		}
+		catch (SQLException ex) { 
+			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+		}
+		catch (Exception e) {
+			System.out.println ("\n*** other Exception caught ***\n"+e);
+		}
+
+	}
 	public static void main ( String args[] ) throws IOException {
 
 		Console console = System.console();
@@ -441,6 +513,11 @@ public class p2 {
 
 				case 5:
 					showClassEnrollments();
+					break;
+				
+				case 6:
+					enroll();
+					proceed();
 					break;
 
 				default:
