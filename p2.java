@@ -293,6 +293,63 @@ public class p2 {
 		}
 		return courseNo;
 	}
+	
+	public static void showClassEnrollments() throws IOException {
+		BufferedReader readKeyBoard;
+		String classid;
+		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Please Enter Class ID: ");
+		classid = readKeyBoard.readLine();
+		clearScreen();
+		classEnrollments(classid);
+		proceed();
+		return;
+	}
+
+	public static void classEnrollments(String classid) {
+		int c = 1;
+		try {
+			PreparedStatement stmt1 = conn.prepareStatement("SELECT classid FROM classes WHERE classes.classid = ?");
+			stmt1.setString(1, classid);
+			ResultSet rset1 = stmt1.executeQuery();
+			if(rset1.next() == false) {
+				System.out.println("The classid is invalid.");
+				return;
+			}
+			stmt1 = conn.prepareStatement("SELECT sid FROM enrollments WHERE classid  = ?");
+			stmt1.setString(1, classid);
+			rset1 = stmt1.executeQuery();
+			if(rset1.next() == false) {
+				System.out.println("No student is enrolled in this class.");
+				return;
+			}
+			PreparedStatement stmt = conn.prepareStatement("SELECT classes.classid, title, semester, year, students.sid, firstName, lastName FROM classes JOIN enrollments ON classes.classid = enrollments.classid JOIN students ON students.sid = enrollments.sid JOIN courses ON courses.dept_code = classes.dept_code AND courses.course_no = classes.course_no WHERE classes.classid = ?");
+			stmt.setString(1, classid);
+			ResultSet rset = stmt.executeQuery();
+			while(rset.next()) {
+				if(c == 1) {
+					System.out.print("Class Info: ");
+					System.out.print(rset.getString(1) + " ");
+					System.out.print(rset.getString(2) + " ");
+					System.out.print(rset.getString(3) + " ");
+					System.out.println(rset.getString(4) + " ");
+					System.out.println("-----------Students------------");
+				}
+				System.out.print(rset.getString(5) + " ");
+				System.out.print(rset.getString(6) + " ");	
+				System.out.println(rset.getString(7) + "\n"); 
+				c = 2;
+			}
+		}
+		catch (SQLException ex) { 
+			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+		}
+		catch (Exception e) {
+			System.out.println ("\n*** other Exception caught ***\n"+e);
+		}
+		return;
+	}
+
 	public static void main ( String args[] ) throws IOException {
 
 		Console console = System.console();
@@ -380,6 +437,10 @@ public class p2 {
 
 				case 4:
 					showPrereqs();
+					break;
+
+				case 5:
+					showClassEnrollments();
 					break;
 
 				default:
