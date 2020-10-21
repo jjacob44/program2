@@ -386,10 +386,13 @@ public class p2 {
 			stmt.setString(1, classid);
 			stmt.setString(2, sid);
 			rset = stmt.executeQuery();
+			/*while(rset.next()) {
+				System.out.print(rset.getString(1) + " " + rset.getString(2));
+			}
 			if(!rset.next()) {
 				System.out.println("Prerequisite courses have not been completed");
 				return;
-			}
+			}*/
 			stmt = conn.prepareStatement("SELECT sid, semester, year from enrollments JOIN classes ON classes.classid = enrollments.classid WHERE sid = ? GROUP BY sid, semester, year HAVING COUNT(*) >= 3");
 			stmt.setString(1, sid);
 			rset = stmt.executeQuery();
@@ -412,7 +415,10 @@ public class p2 {
 				System.out.println("The student is already in the class");
 				return;
 			}
-			
+			stmt = conn.prepareStatement("INSERT INTO enrollments VALUES(?, ?, NULL)");
+			stmt.setString(1, sid);
+			stmt.setString(2, classid);
+			rset = stmt.executeQuery();
 		}
 		catch (SQLException ex) { 
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
