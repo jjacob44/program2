@@ -125,10 +125,6 @@ public class p2 {
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
 			return;
 		}
-		catch (Exception e) {
-			System.out.println ("\n*** other Exception caught ***\n"+e);
-			return;
-		}
 		System.out.println("------------End of Results-----------");
 	}
 	public static void clearScreen() {  
@@ -150,6 +146,10 @@ public class p2 {
 			pstmt.executeUpdate();
 		}
 		catch(SQLException e){
+			System.out.println(e);
+			return;
+		}
+		catch (NumberFormatException e){
 			System.out.println(e);
 			return;
 		}
@@ -418,7 +418,6 @@ public class p2 {
 			BufferedReader readKeyBoard;
 			readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("---Enroll Successful---");
-			readKeyBoard.readLine();
 		}
 		catch (SQLException ex) { 
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
