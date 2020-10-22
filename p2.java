@@ -622,8 +622,6 @@ public class p2 {
 			BufferedReader readKeyBoard;
 			readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("---REMOVAL Successful---");
-			System.out.print("Press Enter to continue...");
-			readKeyBoard.readLine();
 		}
 		catch (SQLException ex) { 
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
