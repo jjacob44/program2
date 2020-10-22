@@ -12,6 +12,11 @@ public class p2 {
 	public static Connection conn;
 	public static String username;
 
+	/**
+	  * Method to run queries
+	  * @param q query string to execute  *
+	  * @return ResultSet This returns the query result 
+	  */
 	public static ResultSet runQuery(String q) {
 		try {
 			Statement qStmt = conn.createStatement();
@@ -65,7 +70,10 @@ public class p2 {
 			
 		runQuery(logQuery);
 	}
-	
+	/**
+	  * Method to display a database table based on table name given by user
+	  * @param None
+	  * @return Nothing */
 	public static void displayTable() throws IOException {
 		BufferedReader readKeyBoard;
 		String tableSelection;
@@ -127,11 +135,25 @@ public class p2 {
 		}
 		System.out.println("------------End of Results-----------");
 	}
+	/**
+	 * Method to clear terminal to avoid clutter
+	 * @param None  
+	 * @return Nothing */
+
 	public static void clearScreen() {  
     	System.out.print("\033[H\033[2J");  
     	System.out.flush();  
 		//code snippet taken from: 	https://stackoverflow.com/questions/2979383/java-clear-the-console
-	}  
+	}
+	/**
+	  * Helper method to insert student into students table
+	  * @param sid Student id
+	  * @param firstName Students first name *
+	  * @param lastName Students last name 
+	  * @param status Freshman, Sophomore, Junior, or Senior 
+	  * @param gpa Student gpa 0 - 4 
+	  * @param emailAddress Students email address 
+	  * @return Nothing */  
 	public static void insertStudent(String sid, String firstName, String lastName, String status, String gpa, String emailAddress)  {
 		double gradePoint = Double.parseDouble(gpa);
 		try{
@@ -155,6 +177,10 @@ public class p2 {
 		}
 		System.out.println("---Enroll Successful---");
 	}
+	/** Method to enroll a student in the university. Takes in inputs from the user and passes them into the helper method insertStudent()
+	 * @param none 
+	 * @return Nothing 
+	 */
 	public static void addStudent() throws IOException{
 		clearScreen();
 		BufferedReader readKeyBoard;
@@ -188,6 +214,11 @@ public class p2 {
 		
 
 	}
+	/**
+	 * Helper method for displayClasses
+	 * @param sid
+	 * @return Nothing
+	 */
 	public static void showClasses(String sid){
 		int c = 1;
 		try {
@@ -232,7 +263,10 @@ public class p2 {
 			System.out.println ("\n*** other Exception caught ***\n"+e);
 		}
 	}
-	
+	/** Takes input from the user and calls the helper function showClasses() to display the classes taken by the selected student
+	 * @param none
+	 * @return Nothing 
+	 */
 	public static void displayClasses() throws IOException {
 		System.out.print("Please enter sid: ");
 		BufferedReader readKeyBoard;
@@ -243,7 +277,11 @@ public class p2 {
 		showClasses(sid);
 		System.out.println("------------End of Results-----------");
 	}
-
+	/**
+	 * After a query is run, this method just allows the user to view his results, and when ready, proceed back to the main menu
+	 * @throws IOException
+	 * @return Nothing
+	 */
 	public static void proceed() throws IOException{
 		BufferedReader readKeyBoard;
 		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
@@ -253,7 +291,11 @@ public class p2 {
 		clearScreen();
 		return;
 	}
-	
+	/**
+	 * Displays prerequisite information based on the student specified by the user. User selection is passed in to the helper method prereqs()
+	 * @throws IOException
+	 * @return Nothing
+	 */
 	public static void showPrereqs() throws IOException {
 		BufferedReader readKeyBoard;
 		String deptCode;
@@ -268,7 +310,13 @@ public class p2 {
 		System.out.println(prereqs(deptCode, courseNo));
 		System.out.println("------------End of Results-----------");
 	}
-
+	/**
+	 * Helper method for showPrereqs(). Runs the query based on the parameters passed in. Takes in a course numer and department code and recursively collects the whole chain of prerequisites for the specified course
+	 * @param deptCode
+	 * @param courseNo
+	 * @return CourseNo
+	 * @throws IOException
+	 */
 	public static String prereqs(String deptCode, String courseNo) throws IOException {
 		try {
 			PreparedStatement stmt = conn.prepareStatement("SELECT prerequisites.pre_dept_code, prerequisites.pre_course_no FROM prerequisites JOIN courses ON prerequisites.dept_code = courses.dept_code AND prerequisites.course_no = courses.course_no WHERE courses.dept_code = ? AND courses.course_no = ?");
@@ -290,7 +338,11 @@ public class p2 {
 		}
 		return courseNo;
 	}
-	
+	/**
+	 * This function takes user input from the interface to specify which class, and then calls the helper function classEnrollments() to display the students enrolled in a particular class
+	 * @throws IOException
+	 * @return Nothing
+	 */
 	public static void showClassEnrollments() throws IOException {
 		BufferedReader readKeyBoard;
 		String classid;
@@ -302,7 +354,10 @@ public class p2 {
 		System.out.println("------------End of Results-----------");
 		return;
 	}
-
+	/**
+	 * Based on the classid, this method shows which students are enrolled in that class
+	 * @param classid
+	 */
 	public static void classEnrollments(String classid) {
 		int c = 1;
 		try {
@@ -346,7 +401,10 @@ public class p2 {
 		}
 		return;
 	}
-
+	/**
+	 * This method enrolls students into courses. It takes input from the user, who specifies the student and classid to enroll him into, and uses that information to call the helper method enrollStudent()
+	 * @throws IOException
+	 */
 	public static void enroll() throws IOException {
 		BufferedReader readKeyBoard;
 		String classid;
@@ -360,7 +418,11 @@ public class p2 {
 		enrollStudent(sid, classid);
 		return;
 	}
-
+	/**
+	 * Run a query to enroll students into a class based on sid and class id 
+	 * @param sid
+	 * @param classid
+	 */
 	public static void enrollStudent(String sid, String classid) {
 		//check if student exists
 		try {
@@ -429,7 +491,10 @@ public class p2 {
 		}
 
 	}
-
+	/**
+	 * This method takes in input from the user who specifies a student and which class to drop him from by calling the helper function dropStudents()
+	 * @throws IOException
+	 */
 	public static void drop() throws IOException {
 		BufferedReader readKeyBoard;
 		String classid;
@@ -443,7 +508,11 @@ public class p2 {
 		dropStudent(sid, classid);
 		return;
 	}
-
+	/**
+	 * Runs the sql query to drop the specified student from the specified class
+	 * @param sid
+	 * @param classid
+	 */
 	public static void dropStudent(String sid, String classid) {
 		try
 		{
@@ -501,8 +570,6 @@ public class p2 {
 			BufferedReader readKeyBoard;
 			readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("---DROP Successful---");
-			System.out.print("Press Enter to continue...");
-			readKeyBoard.readLine();
 		}
 		catch (SQLException ex) { 
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
@@ -511,7 +578,10 @@ public class p2 {
 			System.out.println ("\n*** other Exception caught ***\n"+e);
 		}
 	}
-
+	/**
+	 * Takes user input to specify which student to delete from the university database by calling the helper method deleteStudent on the selected student
+	 * @throws IOException
+	 */
 	public static void delete() throws IOException {
 		BufferedReader readKeyBoard;
 		String sid;
@@ -522,7 +592,10 @@ public class p2 {
 		deleteStudent(sid);
 		return;
 	}
-
+	/**
+	 * Runs the sql query to delete the student from the university database specified by the sid
+	 * @param sid
+	 */
 	public static void deleteStudent(String sid) {
 		try 
 		{
@@ -559,7 +632,11 @@ public class p2 {
 			System.out.println ("\n*** other Exception caught ***\n"+e);
 		}
 	}
-
+	/**
+	 * Main function
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main ( String args[] ) throws IOException {
 
 		Console console = System.console();
