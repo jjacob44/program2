@@ -523,6 +523,56 @@ public class p2 {
 			System.out.println ("\n*** other Exception caught ***\n"+e);
 		}
 	}
+
+	public static void delete() throws IOException {
+		BufferedReader readKeyBoard;
+		String sid;
+		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Please Enter sid: ");
+		sid = readKeyBoard.readLine();
+		clearScreen();
+		deleteStudent(sid);
+		//proceed();
+		return;
+	}
+
+	public static void deleteStudent(String sid) {
+		try 
+		{
+			PreparedStatement stmt = conn.prepareStatement("SELECT sid FROM students where sid = ?");
+			stmt.setString(1, sid);
+			ResultSet rset = stmt.executeQuery();
+			if(!rset.next()) {
+				System.out.println("sid not found");
+				return;
+			}
+			stmt = conn.prepareStatement("SELECT classes.classid, class_size FROM enrollments JOIN classes ON classes.classid = enrollments.classid WHERE sid = ?");
+			stmt.setString(1, sid);
+			rset = stmt.executeQuery();
+			while(rset.next()) {
+				if(rset.getString(2).equals("1")) {
+					System.out.println("The class " + rset.getString(1) + " now has no students.");
+				}
+			} 
+
+			stmt = conn.prepareStatement("DELETE FROM students WHERE sid = ?");
+			stmt.setString(1, sid);
+			rset = stmt.executeQuery();
+
+			BufferedReader readKeyBoard;
+			readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("---REMOVAL Successful---");
+			System.out.print("Press Enter to continue...");
+			readKeyBoard.readLine();
+		}
+		catch (SQLException ex) { 
+			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+		}
+		catch (Exception e) {
+			System.out.println ("\n*** other Exception caught ***\n"+e);
+		}
+	}
+
 	public static void main ( String args[] ) throws IOException {
 
 		Console console = System.console();
@@ -622,6 +672,10 @@ public class p2 {
 				
 				case 7:
 					drop();
+					break;
+				
+				case 8:
+					delete();
 					break;
 
 				default:
