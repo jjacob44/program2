@@ -396,8 +396,9 @@ public class p2 {
 				System.out.println("Prerequisite courses have not been completed");
 				return;
 			}
-			stmt = conn.prepareStatement("SELECT sid, semester, year from enrollments JOIN classes ON classes.classid = enrollments.classid WHERE sid = ? GROUP BY sid, semester, year HAVING COUNT(*) >= 3");
+			stmt = conn.prepareStatement("SELECT sid, CONCAT(semester, year) from enrollments JOIN classes ON classes.classid = enrollments.classid WHERE sid = ? AND CONCAT(semester, year) IN (SELECT CONCAT(semester, year) FROM classes WHERE classid = ?) GROUP BY sid, semester, year HAVING COUNT(*) >= 3");
 			stmt.setString(1, sid);
+			stmt.setString(2, classid);
 			rset = stmt.executeQuery();
 			if(rset.next()) {
 				System.out.println("You are overloaded");
@@ -423,6 +424,11 @@ public class p2 {
 			stmt.setString(1, sid);
 			stmt.setString(2, classid);
 			rset = stmt.executeQuery();
+			BufferedReader readKeyBoard;
+			readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("---Enroll Successful---");
+			System.out.print("Press Enter to continue...");
+			readKeyBoard.readLine();
 		}
 		catch (SQLException ex) { 
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
@@ -527,7 +533,6 @@ public class p2 {
 				
 				case 6:
 					enroll();
-					proceed();
 					break;
 
 				default:
