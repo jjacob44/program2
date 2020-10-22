@@ -14,8 +14,8 @@ public class p2 {
 
 	/**
 	  * Method to run queries
-	  * @param q query string to execute  *
-	  * @return ResultSet This returns the query result 
+	  * @param q query string to execute *
+	  * @return ResultSet This returns the query result
 	  */
 	public static ResultSet runQuery(String q) {
 		try {
@@ -137,7 +137,7 @@ public class p2 {
 	}
 	/**
 	 * Method to clear terminal to avoid clutter
-	 * @param None  
+	 * @param None 
 	 * @return Nothing */
 
 	public static void clearScreen() {  
@@ -215,7 +215,7 @@ public class p2 {
 
 	}
 	/**
-	 * Helper method for displayClasses
+	 * Helper method for displayClasses. Takes in the sid, and runs the sql query to display all classes taken by the student with that sid
 	 * @param sid
 	 * @return Nothing
 	 */
@@ -311,7 +311,7 @@ public class p2 {
 		System.out.println("------------End of Results-----------");
 	}
 	/**
-	 * Helper method for showPrereqs(). Runs the query based on the parameters passed in. Takes in a course numer and department code and recursively collects the whole chain of prerequisites for the specified course
+	 * Helper method for showPrereqs(). Runs the query based on the parameters passed in. Takes in a course number and department code and recursively collects the whole chain of prerequisites for the specified course
 	 * @param deptCode
 	 * @param courseNo
 	 * @return CourseNo
