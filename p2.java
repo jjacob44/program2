@@ -438,6 +438,91 @@ public class p2 {
 		}
 
 	}
+
+	public static void drop() throws IOException {
+		BufferedReader readKeyBoard;
+		String classid;
+		String sid;
+		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Please Enter sid: ");
+		sid = readKeyBoard.readLine();
+		System.out.print("Please Enter Class ID: ");
+		classid = readKeyBoard.readLine();
+		clearScreen();
+		dropStudent(sid, classid);
+		//proceed();
+		return;
+	}
+
+	public static void dropStudent(String sid, String classid) {
+		try
+		{
+			PreparedStatement stmt = conn.prepareStatement("SELECT sid FROM students where sid = ?");
+			stmt.setString(1, sid);
+			ResultSet rset = stmt.executeQuery();
+			if(!rset.next()) {
+				System.out.println("sid not found");
+				return;
+			}
+			stmt = conn.prepareStatement("SELECT classid FROM classes where classid = ?");
+			stmt.setString(1, classid);
+			rset = stmt.executeQuery();
+			if(!rset.next()) {
+				System.out.println("classid not found");
+				return;
+			}
+			stmt = conn.prepareStatement("SELECT sid FROM enrollments where sid = ? AND classid = ?");
+			stmt.setString(1, sid);
+			stmt.setString(2, classid);
+			rset = stmt.executeQuery();
+			if(!rset.next()) {
+				System.out.println("The student is not enrolled in the class");
+				return;
+			}
+			stmt = conn.prepareStatement("SELECT * FROM (SELECT CONCAT(pre_dept_code, pre_course_no) AS pres FROM prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no JOIN enrollments ON enrollments.classid = classes.classid WHERE sid = ?) WHERE pres IN (SELECT CONCAT(dept_code, course_no) AS p FROM classes WHERE classid = ?)");
+			stmt.setString(1, sid);
+			stmt.setString(2, classid);
+			rset = stmt.executeQuery();
+			if(rset.next()) {
+				System.out.println("The drop is not permitted because another class uses it as a prerequisite");
+				return;
+			}
+			stmt = conn.prepareStatement("DELETE FROM enrollments WHERE sid = ? AND classid = ?");
+			stmt.setString(1, sid);
+			stmt.setString(2, classid);
+			//stmt.executeUpdate("begin dbms_output.enable(); end;");
+			rset = stmt.executeQuery();
+			//stmt.execute("GET_LINE (line OUT VARCHAR2, status OUT INTEGER)");
+			
+			stmt = conn.prepareStatement("SELECT * FROM enrollments WHERE sid = ?");
+			stmt.setString(1, sid);
+			rset = stmt.executeQuery();
+			if(!rset.next()) {
+				System.out.println("This student is enrolled in no class");
+			}
+
+			stmt = conn.prepareStatement("SELECT * FROM classes WHERE classid = ?");
+			stmt.setString(1, classid);
+			rset = stmt.executeQuery();
+			while(rset.next()) {
+				if(rset.getString(8).equals("0")) {
+					System.out.println("The class now has no students.");
+				}
+			}
+
+			BufferedReader readKeyBoard;
+			readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("---DROP Successful---");
+			System.out.print("Press Enter to continue...");
+			readKeyBoard.readLine();
+		}
+		catch (SQLException ex) { 
+			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+		}
+		catch (Exception e) {
+			System.out.println ("\n*** other Exception caught ***\n"+e);
+		}
+	}
 	public static void main ( String args[] ) throws IOException {
 
 		Console console = System.console();
@@ -533,6 +618,10 @@ public class p2 {
 				
 				case 6:
 					enroll();
+					break;
+				
+				case 7:
+					drop();
 					break;
 
 				default:
