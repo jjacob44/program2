@@ -382,17 +382,20 @@ public class p2 {
 				System.out.println("The classid is invalid");
 				return;
 			}
-			stmt = conn.prepareStatement("SELECT prerequisites.pre_dept_code, prerequisites.pre_course_no from prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no JOIN enrollments ON enrollments.classid = classes.classid JOIN students ON students.sid = enrollments.sid WHERE classes.classid = ? AND students.sid = ? AND lgrade < 'D'");
+			//stmt = conn.prepareStatement("SELECT prerequisites.pre_dept_code, prerequisites.pre_course_no from prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no JOIN enrollments ON enrollments.classid = classes.classid JOIN students ON students.sid = enrollments.sid WHERE classes.classid = ? AND students.sid = ? AND lgrade < 'D'");
+			stmt =  conn.prepeareStatement("SELECT * FROM ((SELECT CONCAT(pre_dept_code, pre_course_no) AS cid FROM prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no WHERE classid = ?)) WHERE cid NOT IN (SELECT * FROM ((SELECT CONCAT(courses.dept_code, courses.course_no) AS cid FROM courses JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no JOIN enrollments ON enrollments.classid = classes.classid WHERE sid = ? AND lgrade < 'D' AND lgrade IS NOT NULL AND CONCAT(courses.dept_code, courses.course_no) IN (SELECT * FROM ((SELECT CONCAT(pre_dept_code, pre_course_no) AS cid FROM prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no WHERE classid = ?))))))"); 
+
 			stmt.setString(1, classid);
 			stmt.setString(2, sid);
+			stmt.setString(3,classid);
 			rset = stmt.executeQuery();
 			/*while(rset.next()) {
 				System.out.print(rset.getString(1) + " " + rset.getString(2));
-			}
-			if(!rset.next()) {
+			}*/
+			if(rset.next()) {
 				System.out.println("Prerequisite courses have not been completed");
 				return;
-			}*/
+			}
 			stmt = conn.prepareStatement("SELECT sid, semester, year from enrollments JOIN classes ON classes.classid = enrollments.classid WHERE sid = ? GROUP BY sid, semester, year HAVING COUNT(*) >= 3");
 			stmt.setString(1, sid);
 			rset = stmt.executeQuery();
@@ -533,3 +536,5 @@ public class p2 {
 		}
 	}		
 }
+
+String checkPrereqs = "SELECT * FROM ((SELECT CONCAT(pre_dept_code, pre_course_no) AS cid FROM prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no WHERE classid = 'c0009')) WHERE cid NOT IN (SELECT * FROM ((SELECT CONCAT(courses.dept_code, courses.course_no) AS cid FROM courses JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no JOIN enrollments ON enrollments.classid = classes.classid WHERE sid = 'B009' AND lgrade < 'D' AND lgrade IS NOT NULL AND CONCAT(courses.dept_code, courses.course_no) IN (SELECT * FROM ((SELECT CONCAT(pre_dept_code, pre_course_no) AS cid FROM prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no WHERE classid = 'c0009'))))))";
