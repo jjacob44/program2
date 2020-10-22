@@ -183,6 +183,7 @@ public class p2 {
 		mail = readKeyBoard.readLine();
 
 		insertStudent(id,first,last,standing,grade,mail);
+		System.out.println("---Enroll Successful---");
 
 	}
 	public static void showClasses(String sid){
@@ -415,7 +416,6 @@ public class p2 {
 			BufferedReader readKeyBoard;
 			readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("---Enroll Successful---");
-			System.out.print("Press Enter to continue...");
 			readKeyBoard.readLine();
 		}
 		catch (SQLException ex) { 
