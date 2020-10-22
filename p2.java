@@ -123,10 +123,13 @@ public class p2 {
 		}
 		catch (SQLException ex) { 
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+			return;
 		}
 		catch (Exception e) {
 			System.out.println ("\n*** other Exception caught ***\n"+e);
+			return;
 		}
+		System.out.println("------------End of Results-----------");
 	}
 	public static void clearScreen() {  
     	System.out.print("\033[H\033[2J");  
@@ -190,7 +193,7 @@ public class p2 {
 			ResultSet rset1 = stmt1.executeQuery();
 			if(rset1.next() == false) {
 				System.out.println("The sid is invalid.");
-				proceed();
+				//proceed();
 				return;
 			}
 			stmt1 = conn.prepareStatement("SELECT sid FROM enrollments WHERE sid  = ?");
@@ -198,7 +201,7 @@ public class p2 {
 			rset1 = stmt1.executeQuery();
 			if(rset1.next() == false) {
 				System.out.println("The student has not taken any courses.");
-				proceed();
+				//proceed();
 				return;
 			}
 			PreparedStatement stmt = conn.prepareStatement("SELECT students.sid, firstname, lastname, status, classes.classid, classes.dept_code, classes.course_no, title  FROM students JOIN enrollments ON enrollments.sid = students.sid JOIN classes ON classes.classid = enrollments.classid JOIN courses ON courses.dept_code = classes.dept_code AND courses.course_no = classes.course_no WHERE students.sid = ?");
@@ -217,7 +220,7 @@ public class p2 {
 				System.out.println(rset.getString(8) + "\n"); 
 				c = 2;
 			}
-			proceed();
+			//proceed();
 		}
 		catch (SQLException ex) { 
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
@@ -235,14 +238,16 @@ public class p2 {
 		sid = readKeyBoard.readLine();
 		clearScreen();
 		showClasses(sid);
+		System.out.println("------------End of Results-----------");
 	}
 
 	public static void proceed() throws IOException{
 		BufferedReader readKeyBoard;
 		readKeyBoard = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("------------End of Results-----------");
+		//System.out.println("------------End of Results-----------");
 		System.out.print("Press Enter to continue...");
 		readKeyBoard.readLine();
+		clearScreen();
 		return;
 	}
 	
@@ -258,7 +263,7 @@ public class p2 {
 		clearScreen();
 		System.out.println("---" + deptCode + courseNo + " Prereqs:---\n");
 		System.out.println(prereqs(deptCode, courseNo));
-		proceed();
+		System.out.println("------------End of Results-----------");
 	}
 
 	public static String prereqs(String deptCode, String courseNo) throws IOException {
@@ -291,7 +296,7 @@ public class p2 {
 		classid = readKeyBoard.readLine();
 		clearScreen();
 		classEnrollments(classid);
-		proceed();
+		System.out.println("------------End of Results-----------");
 		return;
 	}
 
@@ -415,9 +420,11 @@ public class p2 {
 		}
 		catch (SQLException ex) { 
 			System.out.println ("\n*** SQLException caught ***\n"+ ex);
+			return;
 		}
 		catch (Exception e) {
 			System.out.println ("\n*** other Exception caught ***\n"+e);
+			return;
 		}
 
 	}
@@ -512,7 +519,6 @@ public class p2 {
 		sid = readKeyBoard.readLine();
 		clearScreen();
 		deleteStudent(sid);
-		//proceed();
 		return;
 	}
 
@@ -624,34 +630,42 @@ public class p2 {
 
 				case 1:
 					displayTable();
+					proceed();
 					break;
 				case 2:
 
 					addStudent();
+					proceed();
 					break;
 
 				case 3:
 					displayClasses();
+					proceed();
 					break;
 
 				case 4:
 					showPrereqs();
+					proceed();
 					break;
 
 				case 5:
 					showClassEnrollments();
+					proceed();
 					break;
 				
 				case 6:
 					enroll();
+					proceed();
 					break;
 				
 				case 7:
 					drop();
+					proceed();
 					break;
 				
 				case 8:
 					delete();
+					proceed();
 					break;
 
 				default:
