@@ -413,6 +413,7 @@ public class p2 {
 			stmt = conn.prepareStatement("SELECT classes.classid FROM classes JOIN enrollments ON enrollments.classid = classes.classid JOIN students ON students.sid = enrollments.sid WHERE classes.classid = ? AND students.sid = ?");
 			stmt.setString(1, classid);
 			stmt.setString(2, sid);
+			//stmt.setString(3, classid);
 			rset = stmt.executeQuery();
 			if(rset.next()) {
 				System.out.println("The student is already in the class");
