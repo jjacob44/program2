@@ -16,9 +16,6 @@ public class p2 {
 		try {
 			Statement qStmt = conn.createStatement();
 			ResultSet retVal = qStmt.executeQuery(q);
-			/*while(retVal.next()) {
-				System.out.println(retVal.getString(1));
-			}*/
 			return retVal;
 		}
 		catch (SQLException ex) { 
@@ -114,9 +111,7 @@ public class p2 {
 				table = "NULL";
 				numColumns = 0;
 		}
-		//System.out.println("TABLE: " + table);
 		String displayQuery = "SELECT * FROM " + table;
-		//System.out.println("DISPLAY QUERY: " + displayQuery);
 		ResultSet rset = runQuery(displayQuery);
 		try {
 			while(rset.next()) {
@@ -132,7 +127,6 @@ public class p2 {
 		catch (Exception e) {
 			System.out.println ("\n*** other Exception caught ***\n"+e);
 		}
-		//log(table, "Display");
 	}
 	public static void clearScreen() {  
     	System.out.print("\033[H\033[2J");  
@@ -155,9 +149,6 @@ public class p2 {
 		catch(SQLException e){
 			System.out.println(e);
 		}
-		//String addQuery = "INSERT INTO students VALUES (" + sid + ", " + firstName + ", " + lastName + ", " + status + ", " + gpa + ", "+ emailAddress + ")"; 
-		//runQuery(addQuery);
-		//log here
 	}
 	public static void addStudent() throws IOException{
 		clearScreen();
@@ -192,8 +183,6 @@ public class p2 {
 
 	}
 	public static void showClasses(String sid){
-		//String classQuery = "SELECT students.sid, firstname, lastname, status, classes.classid, classes.dept_code, classes.course_no, title  FROM students JOIN enrollments ON enrollments.sid = students.sid JOIN classes ON classes.classid = enrollments.classid JOIN courses ON courses.dept_code = classes.dept_code AND courses.course_no = classes.course_no WHERE students.sid = ?";
-		//ResultSet rset = runQuery(classQuery);
 		int c = 1;
 		try {
 			PreparedStatement stmt1 = conn.prepareStatement("SELECT sid FROM students WHERE sid  = ?");
@@ -361,7 +350,6 @@ public class p2 {
 		classid = readKeyBoard.readLine();
 		clearScreen();
 		enrollStudent(sid, classid);
-		//proceed();
 		return;
 	}
 
@@ -382,16 +370,12 @@ public class p2 {
 				System.out.println("The classid is invalid");
 				return;
 			}
-			//stmt = conn.prepareStatement("SELECT prerequisites.pre_dept_code, prerequisites.pre_course_no from prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no JOIN enrollments ON enrollments.classid = classes.classid JOIN students ON students.sid = enrollments.sid WHERE classes.classid = ? AND students.sid = ? AND lgrade < 'D'");
 			stmt =  conn.prepareStatement("SELECT * FROM ((SELECT CONCAT(pre_dept_code, pre_course_no) AS cid FROM prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no WHERE classid = ?)) WHERE cid NOT IN (SELECT * FROM ((SELECT CONCAT(courses.dept_code, courses.course_no) AS cid FROM courses JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no JOIN enrollments ON enrollments.classid = classes.classid WHERE sid = ? AND lgrade < 'D' AND lgrade IS NOT NULL AND CONCAT(courses.dept_code, courses.course_no) IN (SELECT * FROM ((SELECT CONCAT(pre_dept_code, pre_course_no) AS cid FROM prerequisites JOIN courses ON courses.dept_code = prerequisites.dept_code AND courses.course_no = prerequisites.course_no JOIN classes ON classes.dept_code = courses.dept_code AND classes.course_no = courses.course_no WHERE classid = ?))))))"); 
 
 			stmt.setString(1, classid);
 			stmt.setString(2, sid);
 			stmt.setString(3,classid);
 			rset = stmt.executeQuery();
-			/*while(rset.next()) {
-				System.out.print(rset.getString(1) + " " + rset.getString(2));
-			}*/
 			if(rset.next()) {
 				System.out.println("Prerequisite courses have not been completed");
 				return;
@@ -414,7 +398,6 @@ public class p2 {
 			stmt = conn.prepareStatement("SELECT classes.classid FROM classes JOIN enrollments ON enrollments.classid = classes.classid JOIN students ON students.sid = enrollments.sid WHERE classes.classid = ? AND students.sid = ?");
 			stmt.setString(1, classid);
 			stmt.setString(2, sid);
-			//stmt.setString(3, classid);
 			rset = stmt.executeQuery();
 			if(rset.next()) {
 				System.out.println("The student is already in the class");
@@ -450,7 +433,6 @@ public class p2 {
 		classid = readKeyBoard.readLine();
 		clearScreen();
 		dropStudent(sid, classid);
-		//proceed();
 		return;
 	}
 
@@ -490,9 +472,7 @@ public class p2 {
 			stmt = conn.prepareStatement("DELETE FROM enrollments WHERE sid = ? AND classid = ?");
 			stmt.setString(1, sid);
 			stmt.setString(2, classid);
-			//stmt.executeUpdate("begin dbms_output.enable(); end;");
 			rset = stmt.executeQuery();
-			//stmt.execute("GET_LINE (line OUT VARCHAR2, status OUT INTEGER)");
 			
 			stmt = conn.prepareStatement("SELECT * FROM enrollments WHERE sid = ?");
 			stmt.setString(1, sid);
@@ -592,14 +572,10 @@ public class p2 {
 				System.out.print("Username: ");
 				username = readKeyBoard.readLine();
 				System.out.print("Password: ");
-				//password = readKeyBoard.readLine();
 				char [] passwordChars = console.readPassword();
 				password = new String(passwordChars);
 				conn = ds.getConnection(username, password);
-				//Statement stmt = conn.createStatement();
-				//stmt.executeQuery("INSERT INTO students VALUES ('B002', 'jack', 'roth', 'freshman', 4.0, 'jrothbe4@bing.edu')");
-				//stmt.executeQuery("INSERT INTO students VALUES ('B003', 'john', 'smith', 'freshman', 3.0, 'jsmith@bing.edu')");
-				//break;
+				
 			}
 			
 			catch (SQLException ex) { 
