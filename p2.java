@@ -151,7 +151,9 @@ public class p2 {
 		}
 		catch(SQLException e){
 			System.out.println(e);
+			return;
 		}
+		System.out.println("---Enroll Successful---");
 	}
 	public static void addStudent() throws IOException{
 		clearScreen();
@@ -183,7 +185,7 @@ public class p2 {
 		mail = readKeyBoard.readLine();
 
 		insertStudent(id,first,last,standing,grade,mail);
-		System.out.println("---Enroll Successful---");
+		
 
 	}
 	public static void showClasses(String sid){
